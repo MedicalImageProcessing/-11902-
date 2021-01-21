@@ -3,8 +3,8 @@ const routes= require('./module/routes');
 const url=require('url');
 const path=require('path')
 // const ejs=require('ejs');
-const app = require('./module/routes');
-const { type } = require('os');
+// const app = require('./module/routes');
+// const { type } = require('os');
 
 //common.getFileMime('.html');
 
