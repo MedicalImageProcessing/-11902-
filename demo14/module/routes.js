@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const ejs = require('ejs');
 
 
 let getFileMime = function (extname) {
@@ -19,7 +20,7 @@ let app = {
         if (pathname != '/favicon.ico') {
             try {
                 let data = fs.readFileSync('./' + staticPath + pathname);
-                
+
                 if (data) {
                     //console.log(type(data));
                     let mime = getFileMime(extname);
@@ -29,18 +30,28 @@ let app = {
             } catch (error) {
 
             }
-            
+
 
         }
     },
     login: (req, res) => {
-        res.end("Login");
+        ejs.renderFile("./views/form.ejs", {}, (err, data) => {
+            res.writeHead(200, { 'Content-Type': 'text/html;charset="utf-8"' });
+            res.end(data)
+        })
     },
     news: (req, res) => {
-        res.end("News");
+        res.end('news');
     },
     doLogin: (req, res) => {
-        res.end("DoLogin");
+        let postData = '';
+        req.on('data', (chunk) => {
+            postData += chunk;
+        })
+        req.on('end', () => {
+            console.log(postData);
+            res.end(postData);
+        })
     },
     error: (req, res) => {
         res.end("error");
@@ -50,4 +61,4 @@ let app = {
 // app.login('req','res')
 // app['login']('req','res')
 
-module.exports=app;
+module.exports = app;
