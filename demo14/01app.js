@@ -1,32 +1,38 @@
 const http = require('http');
-const fs=require('fs');
-const common=require('./module/common.js')
-const path=require('path');
-const extname= require('path');
+const routes= require('./module/routes');
 const url=require('url');
+const path=require('path')
+// const ejs=require('ejs');
+const app = require('./module/routes');
+const { type } = require('os');
 
 //common.getFileMime('.html');
 
 http.createServer(function (req,res){
-    console.log(req.url)
+    routes.static(req,res,'static');
 
-    let pathname=url.parse(req.url).pathname;
-    pathname=pathname=='/'?'/index.html':pathname;
-    let extname=path.extname(pathname);
-    if(pathname!='/favicon.ico'){
-        fs.readFile('./static'+pathname,async (err,data)=>{
-            if(err){
-                res.writeHead(404,{'Content-Type':'text/html;charset="utf-8"'});
-                res.end('This Page doesn\'t Exit');
-                
-            }
-            let mime=await common.getFileMime(extname);
-            res.writeHead(200,{'Content-Type':''+mime+';charset="utf-8"'});
-            res.end(data);
-        })
+
+    var pathname=url.parse(req.url).pathname.replace("/","");
+    var destination;
+    //console.log(path.extname(pathname));
+    //console.log(type(pathname));
+    //console.log(pathname.toString());
+    if(pathname.indexOf('/')==-1&&pathname!=''&&pathname!="favicon.ico"&&pathname.indexOf('.')==-1){
+        destination=pathname;
+        try{
+            // app.pathname(req,res);
+            routes[destination](req,res);
+        }catch(error){
+            routes['error'](req,res);
+            
+        }
+    
     }
 
-   
+    
+ 
 }).listen(3000);
 
 console.log('server running at http://127.0.0.1:3000');
+
+
